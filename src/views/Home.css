@@ -1,0 +1,30 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f5f5f5;
+}
+
+.queue {
+  background: #ffffff;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.text-50 {
+  font-size: 50px;
+  font-weight: bold;
+}
+
+.text-q {
+  font-size: 90px;
+  font-weight: bold;
+}
+
