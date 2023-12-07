@@ -7,6 +7,9 @@ import Home from "./views/Home.jsx";
 import Navigate from "./views/Navigate.jsx";
 import QrScaner from "./views/QrScaner.jsx";
 import Department from "./views/Department.jsx";
+import Doctor from "./views/Doctor.jsx";
+import Login from "./views/Login.jsx";
+import HospitalManagement from "./views/HospitalManagement.jsx";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +22,9 @@ const router = createBrowserRouter([
   },
   { path: "/qrscaner", element: <QrScaner /> },
   { path: "/department", element: <Department /> },
+  { path: "/login", element: <Login /> },
+  { path: "/doctor", element: <Doctor /> },
+  { path: "/hospital-mannage", element: <HospitalManagement /> },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

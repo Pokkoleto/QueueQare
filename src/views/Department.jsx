@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../App.css";
 import {
   DesktopOutlined,
@@ -7,6 +8,7 @@ import {
 import { Button, Layout, Menu, Popconfirm, Table } from "antd";
 import { useState } from "react";
 import { Col, Container, Row } from "reactstrap";
+import { faCircle } from "@fortawesome/free-regular-svg-icons";
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -30,7 +32,6 @@ for (let i = 0; i < 100; i++) {
 const items = [
   getItem("เรียกคิว", "1", <PieChartOutlined />),
   getItem("จัดการคิวทั้งหมด", "2", <DesktopOutlined />),
-  getItem("โปรไฟล์", "3", <FileOutlined />),
 ];
 
 const Body1 = () => {
@@ -55,19 +56,30 @@ const Body1 = () => {
           <Row className="h-3/4 box-container-med">
             <Col className="h-100 d-flex flex-column">
               <Row className="flex text-center">
-                <h2>กำลังตรวจ</h2>
+                <h2>ห้องตรวจ</h2>
               </Row>
               <Row className="mt-4">
-                <h4>ชื่อ : นส. สมหญิง ยิ่งยง</h4>
-                <h4>หมายเลขคิว : 001</h4>
-                <h4>เบอร์โทรศัพท์ : 0676340628</h4>
+                <h4 className="text-green-500">
+                  <FontAwesomeIcon
+                    icon={faCircle}
+                    className="text-green-500 mr-3"
+                  />
+                  ว่าง : 10 ห้อง
+                </h4>
+                <h4 className="text-red-500 mr-3">
+                  <FontAwesomeIcon
+                    icon={faCircle}
+                    className="text-red-500 mr-3"
+                  />
+                  มีคนตรวจอยู่ : 3 ห้อง
+                </h4>
               </Row>
               <Row className="h-100">
                 <Col></Col>
                 <Col className="flex justify-end items-end">
-                  <Button type="primary" className="h-14">
+                  {/* <Button type="primary" className="h-14">
                     เลือกแผนกส่งต่อ
-                  </Button>
+                  </Button> */}
                 </Col>
               </Row>
             </Col>
@@ -185,7 +197,6 @@ const Department = () => {
         >
           {selectedKey == 1 && <Body1 />}
           {selectedKey == 2 && <Body2 />}
-          {selectedKey == 3 && <Body1 />}
         </Content>
       </Layout>
     </Layout>
