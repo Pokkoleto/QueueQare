@@ -60,6 +60,7 @@ const items = [
 ];
 
 export const Body1 = () => {
+  const [showData, setShowData] = useState(data);
   const [open, setOpen] = useState(false);
   const handleAdd = () => {
     console.log("add");
@@ -69,7 +70,16 @@ export const Body1 = () => {
   };
   return (
     <div>
-      <Input.Search placeholder="ค้นหาแผนก" className="mb-4" />
+      <Input.Search
+        placeholder="ค้นหาแผนก"
+        className="mb-4"
+        onChange={(value) => {
+          console.log(value.target.value);
+          setShowData(
+            data.filter((item) => item.name.includes(value.target.value))
+          );
+        }}
+      />
       <Button type="primary" className="mb-4" onClick={() => setOpen(true)}>
         เพิ่มแผนก
       </Button>
@@ -128,7 +138,7 @@ export const Body1 = () => {
           </Form.Item>
         </Form>
       </Modal>
-      <Table dataSource={data}>
+      <Table dataSource={showData}>
         <Column title="ชื่อแผนก" dataIndex="name" key="name" on />
         <Column title="" dataIndex="name2" key="name2" />
         <Column title="ชั้น" dataIndex="floor" key="floor" />
@@ -154,6 +164,7 @@ export const Body1 = () => {
 };
 
 export const Body2 = () => {
+  const [showData2, setShowData2] = useState(data2);
   const [open, setOpen] = useState(false);
   const handleAdd = () => {
     console.log("add");
@@ -164,7 +175,16 @@ export const Body2 = () => {
   const [isSelect, setIsSelect] = useState(false);
   return (
     <div>
-      <Input.Search placeholder="ค้นหาแพทย์" className="mb-4" />
+      <Input.Search
+        placeholder="ค้นหาแพทย์"
+        className="mb-4"
+        onChange={(value) => {
+          console.log(value.target.value);
+          setShowData2(
+            data2.filter((item) => item.name.includes(value.target.value))
+          );
+        }}
+      />
       <Button type="primary" className="mb-4" onClick={() => setOpen(true)}>
         เพิ่มแพทย์
       </Button>
@@ -277,7 +297,7 @@ export const Body2 = () => {
           </Form.Item>
         </Form>
       </Modal>
-      <Table dataSource={data2}>
+      <Table dataSource={showData2}>
         <Column title="ชื่อนามสกุล" dataIndex="name" key="name" on />
         <Column title="แผนก" dataIndex="name2" key="name2" />
         <Column title="ชั้น" dataIndex="floor" key="floor" />
