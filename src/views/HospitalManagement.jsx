@@ -1,10 +1,24 @@
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../App.css";
 import { UserOutlined } from "@ant-design/icons";
-import { Button, Layout, Menu, Table, Input, Space, Modal, Form } from "antd";
+import {
+  Button,
+  Layout,
+  Menu,
+  Table,
+  Input,
+  Space,
+  Modal,
+  Form,
+  Popconfirm,
+  QRCode,
+  Select,
+} from "antd";
 import { useState } from "react";
 import { Col, Container, Row } from "reactstrap";
-import { faBuilding } from "@fortawesome/free-regular-svg-icons";
+import { faBuilding, faMap } from "@fortawesome/free-regular-svg-icons";
+import { faLocation } from "@fortawesome/free-solid-svg-icons";
 const { Header, Content, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -27,18 +41,288 @@ for (let i = 0; i < 20; i++) {
   });
 }
 
+const data2 = [];
+for (let i = 0; i < 20; i++) {
+  data2.push({
+    key: i,
+    name: `แพทย์ ${i}`,
+    name2: `department ${i % 3}`,
+    no: i,
+    floor: (i % 3) + 1,
+    number: 0,
+  });
+}
+
 const items = [
   getItem("แผนก", "1", <FontAwesomeIcon icon={faBuilding} />),
   getItem("บุคลากร", "2", <UserOutlined />),
+  getItem("การนำทาง", "3", <FontAwesomeIcon icon={faMap} />),
 ];
 
-const HospitalManagement = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const [selectedKey, setSelectedKey] = useState("1");
+export const Body1 = () => {
   const [open, setOpen] = useState(false);
   const handleAdd = () => {
     console.log("add");
   };
+  const handleDelete = (key) => {
+    const newData = data.filter((item) => item.key !== key);
+  };
+  return (
+    <div>
+      <Input.Search placeholder="ค้นหาแผนก" className="mb-4" />
+      <Button type="primary" className="mb-4" onClick={() => setOpen(true)}>
+        เพิ่มแผนก
+      </Button>
+      <Modal
+        title="สร้างแผนกใหม่"
+        centered
+        open={open}
+        onOk={() => setOpen(false)}
+        onCancel={() => setOpen(false)}
+        footer={[]}
+        width={1000}
+      >
+        <Form
+          name="wrap"
+          labelCol={{
+            flex: "110px",
+          }}
+          labelAlign="left"
+          labelWrap
+          wrapperCol={{
+            flex: 1,
+          }}
+          colon={false}
+          style={{
+            maxWidth: 800,
+          }}
+        >
+          <Form.Item
+            label="ชื่อแผนก"
+            name="ชื่อแผนก"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="ชื่อแผนก (ภาษาอังกฤษ)"
+            name="ชื่อแผนก (ภาษาอังกฤษ)"
+            rules={[
+              {
+                required: false,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item label=" ">
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Table dataSource={data}>
+        <Column title="ชื่อแผนก" dataIndex="name" key="name" on />
+        <Column title="" dataIndex="name2" key="name2" />
+        <Column title="ชั้น" dataIndex="floor" key="floor" />
+        <Column title="จำนวนแพทย์" dataIndex="number" key="number" />
+        <Column
+          title="การจัดการ"
+          key="action"
+          render={(_, record) => (
+            <Space size="middle">
+              <a>แก้ไข {record.lastName}</a>
+              <Popconfirm
+                title="แน่ใจที่จะลบหรือไม่"
+                onConfirm={() => handleDelete(record.key)}
+              >
+                <a>ลบ</a>
+              </Popconfirm>
+            </Space>
+          )}
+        />
+      </Table>
+    </div>
+  );
+};
+
+export const Body2 = () => {
+  const [open, setOpen] = useState(false);
+  const handleAdd = () => {
+    console.log("add");
+  };
+  const handleDelete = (key) => {
+    const newData = data.filter((item) => item.key !== key);
+  };
+  const [isSelect, setIsSelect] = useState(false);
+  return (
+    <div>
+      <Input.Search placeholder="ค้นหาแพทย์" className="mb-4" />
+      <Button type="primary" className="mb-4" onClick={() => setOpen(true)}>
+        เพิ่มแพทย์
+      </Button>
+      <Modal
+        title="เพิ่มแพทย์"
+        centered
+        open={open}
+        onOk={() => setOpen(false)}
+        onCancel={() => setOpen(false)}
+        footer={[]}
+        width={1000}
+      >
+        <Form
+          name="wrap"
+          labelCol={{
+            flex: "110px",
+          }}
+          labelAlign="left"
+          labelWrap
+          wrapperCol={{
+            flex: 1,
+          }}
+          colon={false}
+          style={{
+            maxWidth: 800,
+          }}
+        >
+          <Form.Item
+            label="ชื่อ-นามสกุล"
+            name="ชื่อ-นามสกุล"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="ชื่อ-นามสกุล (ภาษาอังกฤษ)"
+            name="ชื่อแผนก (ภาษาอังกฤษ)"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="แผนก"
+            name="แผนก"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Select
+              className="ml-2"
+              showSearch
+              style={{ width: 200 }}
+              placeholder="เลือกแผนกส่งต่อ"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                (option?.label ?? "").includes(input)
+              }
+              filterSort={(optionA, optionB) =>
+                (optionA?.label ?? "")
+                  .toLowerCase()
+                  .localeCompare((optionB?.label ?? "").toLowerCase())
+              }
+              options={[
+                {
+                  value: "1",
+                  label: "แผนกที่ 1",
+                },
+                {
+                  value: "2",
+                  label: "แผนกที่ 2",
+                },
+                {
+                  value: "3",
+                  label: "แผนกที่ 3",
+                },
+                {
+                  value: "4",
+                  label: "แผนกที่ 4",
+                },
+                {
+                  value: "5",
+                  label: "แผนกที่ 5",
+                },
+                {
+                  value: "6",
+                  label: "แผนกที่ 6",
+                },
+              ]}
+              onSelect={(value) => {
+                setIsSelect(true);
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item label=" ">
+            <Button type="primary" htmlType="submit" disabled={!isSelect}>
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Table dataSource={data2}>
+        <Column title="ชื่อนามสกุล" dataIndex="name" key="name" on />
+        <Column title="แผนก" dataIndex="name2" key="name2" />
+        <Column title="ชั้น" dataIndex="floor" key="floor" />
+        <Column title="จำนวนแพทย์" dataIndex="number" key="number" />
+        <Column
+          title="การจัดการ"
+          key="action"
+          render={(_, record) => (
+            <Space size="middle">
+              <a>แก้ไข {record.lastName}</a>
+              <Popconfirm
+                title="แน่ใจที่จะลบหรือไม่"
+                onConfirm={() => handleDelete(record.key)}
+              >
+                <a>ลบ</a>
+              </Popconfirm>
+            </Space>
+          )}
+        />
+      </Table>
+    </div>
+  );
+};
+
+export const Body3 = () => {
+  const [text, setText] = React.useState("");
+  return (
+    <div>
+      <Space direction="vertical" align="center">
+        <QRCode value={text || "-"} />
+        <Input
+          placeholder="-"
+          maxLength={60}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+      </Space>
+    </div>
+  );
+};
+
+const HospitalManagement = () => {
+  const [collapsed, setCollapsed] = useState(false);
+  const [selectedKey, setSelectedKey] = useState("1");
+
   return (
     <Layout
       style={{
@@ -72,82 +356,9 @@ const HospitalManagement = () => {
             margin: "16px",
           }}
         >
-          {/* {selectedKey == 1 && <Body1 />} */}
-          <Input.Search placeholder="ค้นหาแผนก" className="mb-4" />
-          <Button type="primary" className="mb-4" onClick={() => setOpen(true)}>
-            เพิ่มแผนก
-          </Button>
-          <Modal
-            title="สร้างแผนกใหม่"
-            centered
-            open={open}
-            onOk={() => setOpen(false)}
-            onCancel={() => setOpen(false)}
-            footer={[]}
-            width={1000}
-          >
-            <Form
-              name="wrap"
-              labelCol={{
-                flex: "110px",
-              }}
-              labelAlign="left"
-              labelWrap
-              wrapperCol={{
-                flex: 1,
-              }}
-              colon={false}
-              style={{
-                maxWidth: 800,
-              }}
-            >
-              <Form.Item
-                label="ชื่อแผนก"
-                name="ชื่อแผนก"
-                rules={[
-                  {
-                    required: true,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                label="ชื่อแผนก (ภาษาอังกฤษ)"
-                name="ชื่อแผนก (ภาษาอังกฤษ)"
-                rules={[
-                  {
-                    required: false,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item label=" ">
-                <Button type="primary" htmlType="submit">
-                  Submit
-                </Button>
-              </Form.Item>
-            </Form>
-          </Modal>
-          <Table dataSource={data}>
-            <Column title="Name" dataIndex="name" key="name" on />
-            <Column title="" dataIndex="name2" key="name2" />
-            <Column title="ชั้น" dataIndex="floor" key="floor" />
-            <Column title="จำนวนแพทย์" dataIndex="number" key="number" />
-            <Column
-              title="การจัดการ"
-              key="action"
-              render={(_, record) => (
-                <Space size="middle">
-                  <a>Edit {record.lastName}</a>
-                  <a>Delete</a>
-                </Space>
-              )}
-            />
-          </Table>
+          {selectedKey == 1 && <Body1 />}
+          {selectedKey == 2 && <Body2 />}
+          {selectedKey == 3 && <Body3 />}
         </Content>
       </Layout>
     </Layout>

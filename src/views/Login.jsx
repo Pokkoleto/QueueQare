@@ -1,9 +1,11 @@
 import { Form, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 const Login = () => {
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
   };
+  const navigator = useNavigate();
 
   return (
     <div>
@@ -54,6 +56,9 @@ const Login = () => {
               type="primary"
               htmlType="submit"
               className="login-form-button w-full"
+              onClick={() => {
+                navigator("/doctor");
+              }}
             >
               Log in
             </Button>
