@@ -18,7 +18,7 @@ const Home = () => {
           <div className="queue flex">
             <Col>
               <Row className="text-center">
-                <h3 className="text-primry-dark font-bold">คิวก่อนหน้า</h3>
+                <h3 className="text-primry-dark font-bold">หมายเลขคิว</h3>
               </Row>
               <Row className="text-center text-q">
                 <p className="text-primry-dark">40</p>
@@ -43,7 +43,7 @@ const Home = () => {
           <Col className="box-container ml-6 mr-3 flex justify-center">
             <div className="">
               <p className="text-primry-dark text-center font-bold">
-                หมายเลขคิวของคุณ
+                คิวก่อนหน้า
               </p>
               <p className="text-primry-dark text-center text-4xl font-bold">
                 40
