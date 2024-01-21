@@ -13,7 +13,7 @@ import HospitalManagement from "./views/HospitalManagement.jsx";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/:token",
     element: <Home />,
   },
   {
@@ -28,7 +28,5 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+  <RouterProvider router={router} />
 );

@@ -1,26 +1,20 @@
-import React, { useState } from "react";
-
-import {
-  Button,
-  Descriptions,
-  Divider,
-  Layout,
-  Menu,
-  Select,
-  Table,
-} from "antd";
+import { useEffect, useState } from "react";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Button, Descriptions, Layout, Menu, Select, Spin, Table } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content, Header } from "antd/es/layout/layout";
 import Column from "antd/es/table/Column";
 import { Col, Container, Row } from "reactstrap";
-import {
-  DesktopOutlined,
-  UserOutlined,
-  PieChartOutlined,
-} from "@ant-design/icons";
+import { UserOutlined, PieChartOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import {
+  getDepartmentById,
+  getDepartments,
+} from "../services/department.service";
+import { getQueueByDepartmentId, move } from "../services/queue.service";
+import { getUserById, logout } from "../services/user.service";
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -33,31 +27,95 @@ const items = [
   getItem("ตรวจคนไข้", "1", <PieChartOutlined />),
   getItem("บัญชีผู้ใช้", "2", <UserOutlined />),
 ];
-const data = [];
-for (let i = 0; i < 100; i++) {
-  data.push({
-    key: i,
-    name: `คนไข้ ${i}`,
-    no: i,
-    phone: "081-234-5678",
-  });
-}
+let data = [];
+let department = [];
 
 export const Body1 = () => {
+  const [showdata, setShowdata] = useState([]);
+  const [update, setUpdate] = useState(0);
+  const [user, setUser] = useState();
+  const [check, setCheck] = useState();
+  const [selectDepartmentId, setSelectDepartmentId] = useState();
+  const [selectValue, setSelectValue] = useState();
+  const [loading, setLoading] = useState(false);
+  const handdleMove = () => {
+    setLoading(true);
+    setTimeout(() => {
+      move({
+        departmentId: user.departmentId,
+        newDepartmentId: selectDepartmentId,
+        queueNumber: check,
+      }).then((res) => {
+        console.log(res);
+        setUpdate(update + 1);
+      });
+      setIsSelect(false);
+      setSelectValue(null); 
+      setLoading(false);
+      setUpdate(update + 1);
+    }, 1000);
+  };
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      setUser(user);
+    }
+    getQueueByDepartmentId(user.departmentId).then((res) => {
+      data = [];
+      res.map((item) => {
+        data.push({
+          no: item.queueNumber,
+        });
+      });
+      setShowdata(data);
+      console.log(res);
+    });
+    getDepartments().then((res) => {
+      department = [];
+      res.map((item) => {
+        department.push({
+          value: item.departmentId,
+          label: item.departmentName,
+        });
+      });
+      console.log(department);
+    });
+    let interval = setInterval(
+      () =>
+        getUserById(user.userId).then((res) => {
+          setCheck(res.check);
+        }),
+      1500
+    );
+    return () => {
+      clearInterval(interval);
+    };
+  }, [update]);
   const [isSelect, setIsSelect] = useState(false);
   return (
     <Container fluid>
+      <Spin
+        spinning={loading}
+        indicator={
+          <LoadingOutlined
+            style={{
+              fontSize: 96,
+            }}
+            spin
+          />
+        }
+        fullscreen
+      />
       <Row>
         <Col>
           <Table
             className="shadow-md"
-            dataSource={data}
+            dataSource={showdata}
             pagination={{
               defaultPageSize: 13,
               showSizeChanger: false,
             }}
           >
-            <Column title="ชื่อ - นามสกุล" dataIndex="name" key="name" />
             <Column title="หมายเลขคิว" dataIndex="no" key="no" />
             <Column title="เบอร์โทรศัพท์" dataIndex="phone" key="phone" />
           </Table>
@@ -69,12 +127,13 @@ export const Body1 = () => {
                 <h2>กำลังตรวจ</h2>
               </Row>
               <Row className="mt-4">
-                <h4>ชื่อ : นส. สมหญิง ยิ่งยง</h4>
-                <h4>หมายเลขคิว : 001</h4>
-                <h4>เบอร์โทรศัพท์ : 0676340628</h4>
+                <h4>{`หมายเลขคิว : ${
+                  check == 0 || check == undefined ? "-" : check
+                }`}</h4>
                 <div className="flex items-center">
                   <h4>ส่งต่อไปที่ : </h4>
                   <Select
+                    value={selectValue}
                     className="ml-2"
                     showSearch
                     style={{ width: 200 }}
@@ -88,34 +147,10 @@ export const Body1 = () => {
                         .toLowerCase()
                         .localeCompare((optionB?.label ?? "").toLowerCase())
                     }
-                    options={[
-                      {
-                        value: "1",
-                        label: "แผนกที่ 1",
-                      },
-                      {
-                        value: "2",
-                        label: "แผนกที่ 2",
-                      },
-                      {
-                        value: "3",
-                        label: "แผนกที่ 3",
-                      },
-                      {
-                        value: "4",
-                        label: "แผนกที่ 4",
-                      },
-                      {
-                        value: "5",
-                        label: "แผนกที่ 5",
-                      },
-                      {
-                        value: "6",
-                        label: "แผนกที่ 6",
-                      },
-                    ]}
+                    options={department}
                     onSelect={(value) => {
                       setIsSelect(true);
+                      setSelectDepartmentId(value);
                     }}
                   />
                 </div>
@@ -128,7 +163,7 @@ export const Body1 = () => {
                 disabled={!isSelect}
                 type="primary"
                 className="h-100 w-100"
-                onClick={() => {}}
+                onClick={handdleMove}
               >
                 <h1>ส่งต่อ</h1>
               </Button>
@@ -154,12 +189,25 @@ export const Body1 = () => {
   );
 };
 export const Body2 = () => {
+  const [user, setUser] = useState();
+  const [department, setDepartment] = useState();
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      setUser(user);
+    }
+    console.log(user);
+    getDepartmentById(user.departmentId).then((res) => {
+      console.log(res);
+      setDepartment(res.departmentName);
+    });
+  }, []);
   const navigator = useNavigate();
   const items = [
     {
       key: "1",
       label: "UserName",
-      children: "Kittiya.ji",
+      children: user?.username ?? "",
     },
     {
       key: "2",
@@ -169,22 +217,12 @@ export const Body2 = () => {
     {
       key: "3",
       label: "ชื่อ - นามสกุล",
-      children: "Kittiya Jikuna",
+      children: user?.name2 ?? "",
     },
     {
       key: "4",
       label: "แผนก",
-      children: "อายุรกรรม",
-    },
-    {
-      key: "5",
-      label: "เบอร์โทรศัพท์",
-      children: "081-2345678",
-    },
-    {
-      key: "6",
-      label: "email",
-      children: "Kittiya.ji@gmail.com",
+      children: department ?? "",
     },
   ];
   return (
@@ -208,6 +246,9 @@ export const Body2 = () => {
             style={{ width: 150 }}
             danger
             onClick={() => {
+              localStorage.removeItem("user");
+              localStorage.removeItem("token");
+              logout(user.userId);
               navigator("/login");
             }}
           >

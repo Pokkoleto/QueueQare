@@ -1,14 +1,55 @@
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, Spin } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { LoadingOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { login } from "../services/user.service";
 const Login = () => {
-  const onFinish = (values) => {
-    console.log("Received values of form: ", values);
-  };
   const navigator = useNavigate();
-
+  const onFinish = (values) => {
+    setLoading(true);
+    setTimeout(() => {
+      login(values)
+        .then((res) => {
+          console.log(res.status);
+          if (res.status === 200) {
+            if (res.user.role === "doctor") {
+              localStorage.setItem("user", JSON.stringify(res.user));
+              localStorage.setItem("token", res.token);
+              navigator("/doctor");
+            } else if (res.user.role === "department") {
+              localStorage.setItem("user", JSON.stringify(res.user));
+              localStorage.setItem("token", res.token);
+              navigator("/department");
+            } else if (res.user.role === "admin") {
+              localStorage.setItem("user", JSON.stringify(res.user));
+              localStorage.setItem("token", res.token);
+              navigator("/hospital-manage");
+            }
+            setLoading(false);
+          }
+        })
+        .catch((err) => {
+          console.log(err.status);
+          setLoading(false);
+        });
+    }, 1000);
+  };
+  const [loading, setLoading] = useState(false);
   return (
     <div>
+      <Spin
+        spinning={loading}
+        indicator={
+          <LoadingOutlined
+            style={{
+              fontSize: 96,
+            }}
+            spin
+          />
+        }
+        fullscreen
+      />
       <div className="flex flex-col justify-center items-center h-screen">
         <div className="text-center py-4 text-50 text-primry-dark">
           <p>QueueQare</p>
@@ -56,9 +97,6 @@ const Login = () => {
               type="primary"
               htmlType="submit"
               className="login-form-button w-full"
-              onClick={() => {
-                navigator("/doctor");
-              }}
             >
               Log in
             </Button>

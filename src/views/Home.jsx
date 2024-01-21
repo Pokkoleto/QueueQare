@@ -4,9 +4,25 @@ import "../App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getQueueByToken } from "../services/queue.service";
+import { getDepartmentById } from "../services/department.service";
 
 const Home = () => {
+  const { token } = useParams();
+  const [queue, setQueue] = useState({});
+  const [info, setInfo] = useState({});
+  useEffect(() => {
+    getQueueByToken(token).then((res) => {
+      setQueue(res);
+      getDepartmentById(res.departmentId).then((res) => {
+        console.log(res);
+        setInfo(res);
+      });
+      console.log(queue);
+    });
+  }, []);
   const navigator = useNavigate();
   return (
     <div>
@@ -21,7 +37,7 @@ const Home = () => {
                 <h3 className="text-primry-dark font-bold">หมายเลขคิว</h3>
               </Row>
               <Row className="text-center text-q">
-                <p className="text-primry-dark">40</p>
+                <p className="text-primry-dark">{queue.queueNumber}</p>
               </Row>
             </Col>
           </div>
@@ -46,17 +62,17 @@ const Home = () => {
                 คิวก่อนหน้า
               </p>
               <p className="text-primry-dark text-center text-4xl font-bold">
-                40
+                {queue.queueBefore}
               </p>
             </div>
           </Col>
           <Col className="box-container ml-3 mr-6 flex justify-center">
             <div className="">
               <p className="text-primry-dark text-center font-bold">
-                สถานที่ถัดไป
+                แผนกปัจจุบัน
               </p>
               <p className="text-primry-dark text-center text-xl font-bold">
-                รอตรวจทั่วไป
+                {info.departmentName}
               </p>
             </div>
           </Col>
