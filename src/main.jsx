@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.css";
@@ -10,6 +9,7 @@ import Department from "./views/Department.jsx";
 import Doctor from "./views/Doctor.jsx";
 import Login from "./views/Login.jsx";
 import HospitalManagement from "./views/HospitalManagement.jsx";
+import AddQueue from "./views/AddQueue.jsx";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +25,7 @@ const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/doctor", element: <Doctor /> },
   { path: "/hospital-manage", element: <HospitalManagement /> },
+  { path: "/queue", element: <AddQueue /> },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
