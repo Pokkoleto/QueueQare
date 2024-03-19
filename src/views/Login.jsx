@@ -11,7 +11,6 @@ const Login = () => {
     setTimeout(() => {
       login(values)
         .then((res) => {
-          console.log(res.status);
           if (res.status === 200) {
             if (res.user.role === "doctor") {
               localStorage.setItem("user", JSON.stringify(res.user));
@@ -30,7 +29,6 @@ const Login = () => {
           }
         })
         .catch((err) => {
-          console.log(err.status);
           setLoading(false);
         });
     }, 1000);

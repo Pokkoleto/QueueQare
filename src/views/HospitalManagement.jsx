@@ -77,7 +77,6 @@ const HospitalManagement = () => {
           mode="inline"
           items={items}
           onSelect={(item) => {
-            console.log(item.key);
             setSelectedKey(item.key);
           }}
         />

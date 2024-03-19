@@ -23,6 +23,7 @@ import {
 } from "../services/queue.service";
 import {
   getActiveDoctor,
+  getDepartmentById,
   getReadyDoctor,
 } from "../services/department.service";
 const { Header, Content, Sider } = Layout;
@@ -50,6 +51,13 @@ const Body1 = () => {
   const [form] = Form.useForm();
   const [update, setUpdate] = useState(0);
   const [user, setUser] = useState();
+  const error = (title, msg) => {
+    Modal.error({
+      title: title,
+      content: msg,
+      centered: true,
+    });
+  };
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
@@ -60,28 +68,34 @@ const Body1 = () => {
       res.map((item) => {
         data.push({
           no: item.queueNumber,
+          tel: item.tel,
         });
       });
       setShowdata(data);
-      console.log(res);
     });
     getReadyDoctor(user.departmentId).then((res) => {
-      console.log(res.count);
       setReady(res.count);
     });
     getActiveDoctor(user.departmentId).then((res) => {
-      console.log(res);
       setActive(res.count);
     });
+    const interval = setInterval(() => {
+      setUpdate(update + 1);
+    }, 1000);
+    return () => clearInterval(interval);
   }, [update]);
   const handdleCallSkip = (e) => {
-    e.departmentId = user.departmentId;
-    console.log(e);
-    callSkip(e).then(() => {
+    setTimeout(() => {
+      e.departmentId = user.departmentId;
+
+      callSkip(e).then(() => {
+        setUpdate(update + 1);
+      });
+      setOpen(false);
       setUpdate(update + 1);
-    });
-    setOpen(false);
+    }, 1000);
   };
+
   return (
     <Container fluid>
       <Modal
@@ -142,7 +156,7 @@ const Body1 = () => {
             }}
           >
             <Column title="หมายเลขคิว" dataIndex="no" key="no" />
-            <Column title="ชื่อ - นามสกุล" dataIndex="name" key="name" />
+            <Column title="เบอร์โทรศัพท์" dataIndex="tel" key="tel" />
           </Table>
         </Col>
         <Col>
@@ -183,8 +197,21 @@ const Body1 = () => {
                 type="primary"
                 className="h-100 w-100"
                 onClick={() => {
-                  call(user.departmentId).then(() => {
-                    setUpdate(update + 1);
+                  call(user.departmentId).then((res) => {
+                    console.log(res);
+                    if (res.message === "no doctor") {
+                      error(
+                        "ไม่มีหมอที่ว่างอยู่",
+                        "ยังไม่มีหมอที่ว่างอยู้ในขณะนี้กรุณารอสักครู่"
+                      );
+                    } else if (res.message === "no queue") {
+                      error(
+                        "ไม่มีคิวที่รอ",
+                        "ยังไม่มีคิวที่รอในขณะนี้กรุณารอสักครู่"
+                      );
+                    } else {
+                      setUpdate(update + 1);
+                    }
                   });
                 }}
               >
@@ -229,9 +256,7 @@ export const Body2 = () => {
   const [user, setUser] = useState();
   const [dataSource, setDataSource] = useState(false);
   const handleDelete = (key) => {
-    console.log(key);
     delQueue(key).then((res) => {
-      console.log(res);
       setUpdate(update + 1);
     });
   };
@@ -246,10 +271,10 @@ export const Body2 = () => {
       res.map((item) => {
         data.push({
           no: item.queueNumber,
+          tel: item.tel,
         });
       });
       setDataSource(data);
-      console.log(res);
     });
   }, [update]);
   const columns = [
@@ -260,8 +285,8 @@ export const Body2 = () => {
     },
     {
       title: "เบอร์โทรศัพท์",
-      dataIndex: "phone",
-      key: "address",
+      dataIndex: "tel",
+      key: "tel",
     },
     {
       title: "การจัดการ",
@@ -294,6 +319,17 @@ export const Body2 = () => {
 const Department = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedKey, setSelectedKey] = useState("1");
+  const [user, setUser] = useState();
+  const [departmentName, setDepartmentName] = useState("");
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      setUser(user);
+    }
+    getDepartmentById(user.departmentId).then((res) => {
+      setDepartmentName(res.departmentName);
+    });
+  }, []);
   return (
     <Layout
       style={{
@@ -312,14 +348,13 @@ const Department = () => {
           mode="inline"
           items={items}
           onSelect={(item) => {
-            console.log(item.key);
             setSelectedKey(item.key);
           }}
         />
       </Sider>
       <Layout>
         <Header className="h-18 items-center flex bg-white shadow-md">
-          <h1 className="text-primry-dark">แผนก อายุรกรรม</h1>
+          <h1 className="text-primry-dark">{`แผนก ${departmentName}`}</h1>
         </Header>
         <Content
           style={{

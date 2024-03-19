@@ -45,12 +45,12 @@ export const Body1 = () => {
         departmentId: user.departmentId,
         newDepartmentId: selectDepartmentId,
         queueNumber: check,
-      }).then((res) => {
-        console.log(res);
+      }).then(() => {
         setUpdate(update + 1);
       });
       setIsSelect(false);
-      setSelectValue(null); 
+      setSelectValue(null);
+      setCheck("-");
       setLoading(false);
       setUpdate(update + 1);
     }, 1000);
@@ -65,10 +65,10 @@ export const Body1 = () => {
       res.map((item) => {
         data.push({
           no: item.queueNumber,
+          tel: item.tel,
         });
       });
       setShowdata(data);
-      console.log(res);
     });
     getDepartments().then((res) => {
       department = [];
@@ -78,14 +78,13 @@ export const Body1 = () => {
           label: item.departmentName,
         });
       });
-      console.log(department);
     });
     let interval = setInterval(
       () =>
         getUserById(user.userId).then((res) => {
           setCheck(res.check);
         }),
-      1500
+      1000
     );
     return () => {
       clearInterval(interval);
@@ -117,7 +116,7 @@ export const Body1 = () => {
             }}
           >
             <Column title="หมายเลขคิว" dataIndex="no" key="no" />
-            <Column title="เบอร์โทรศัพท์" dataIndex="phone" key="phone" />
+            <Column title="เบอร์โทรศัพท์" dataIndex="tel" key="tel" />
           </Table>
         </Col>
         <Col>
@@ -149,6 +148,7 @@ export const Body1 = () => {
                     }
                     options={department}
                     onSelect={(value) => {
+                      setSelectValue(value);
                       setIsSelect(true);
                       setSelectDepartmentId(value);
                     }}
@@ -196,9 +196,8 @@ export const Body2 = () => {
     if (user) {
       setUser(user);
     }
-    console.log(user);
+
     getDepartmentById(user.departmentId).then((res) => {
-      console.log(res);
       setDepartment(res.departmentName);
     });
   }, []);
@@ -263,6 +262,17 @@ export const Body2 = () => {
 const Doctor = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedKey, setSelectedKey] = useState("1");
+  const [departmentName, setDepartmentName] = useState("");
+  const [user, setUser] = useState();
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      setUser(user);
+    }
+    getDepartmentById(user.departmentId).then((res) => {
+      setDepartmentName(res.departmentName);
+    });
+  }, []);
   return (
     <div>
       <Layout
@@ -282,14 +292,13 @@ const Doctor = () => {
             mode="inline"
             items={items}
             onSelect={(item) => {
-              console.log(item.key);
               setSelectedKey(item.key);
             }}
           />
         </Sider>
         <Layout>
           <Header className="h-18 items-center flex bg-white shadow-md">
-            <h1 className="text-primry-dark">แผนก อายุรกรรม</h1>
+            <h1 className="text-primry-dark">{`แผนก ${departmentName}`}</h1>
           </Header>
           <Content
             style={{

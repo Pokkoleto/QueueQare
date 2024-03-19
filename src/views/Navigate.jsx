@@ -8,8 +8,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import { FloatButton } from "antd";
 import { QrcodeOutlined } from "@ant-design/icons";
+import { useEffect } from "react";
+import Map from "../components/Map";
 
 const Navigate = () => {
+  useEffect(() => {}, []);
   const navigator = useNavigate();
   return (
     <div>
@@ -28,6 +31,9 @@ const Navigate = () => {
             </div>
             <FontAwesomeIcon icon={faLocationArrow} size="xl" color="#FFFFFF" />
           </div>
+        </Row>
+        <Row>
+          <Map />
         </Row>
         <FloatButton
           className="float-button"

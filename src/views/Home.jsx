@@ -14,16 +14,15 @@ const Home = () => {
   const [queue, setQueue] = useState({});
   const [info, setInfo] = useState({});
   useEffect(() => {
-    getQueueByToken(token).then((res) => {
+    localStorage.setItem("token", token);
+    const tt = localStorage.getItem("token");
+    getQueueByToken(tt).then((res) => {
       setQueue(res);
       getDepartmentById(res.departmentId).then((res) => {
-        console.log(res);
         setInfo(res);
       });
-      console.log(queue);
     });
   }, []);
-  const navigator = useNavigate();
   return (
     <div>
       <Col>
@@ -51,7 +50,7 @@ const Home = () => {
           <div className="d-flex justify-center">
             <FontAwesomeIcon icon={faClock} size="2x" color="#0e4e89" />
             <p className="text-primry-dark text-2xl text-center ml-4 font-bold">
-              2 ชั่วโมง 40 นาที
+              {queue.queueBefore * 5} นาที
             </p>
           </div>
         </Row>
@@ -81,7 +80,7 @@ const Home = () => {
           <Button
             color="primary"
             size="lg"
-            onClick={() => navigator("/navigate")}
+            onClick={() => window.open("https://queueqare-map.vercel.app/")}
           >
             การนำทาง
             <FontAwesomeIcon

@@ -41,9 +41,8 @@ const HospitalBody2 = () => {
   const handleAdd = (e, userId) => {
     e.userId = userId;
     e.role = "doctor";
-    console.log(e);
+
     register(e).then((res) => {
-      console.log(res);
       setUpdate(update + 1);
       form.resetFields();
       setOpen(false);
@@ -51,9 +50,7 @@ const HospitalBody2 = () => {
     });
   };
   const handleDelete = (key) => {
-    console.log(key);
     delUser(key).then((res) => {
-      console.log(res);
       setUpdate(update + 1);
     });
   };
@@ -66,7 +63,6 @@ const HospitalBody2 = () => {
           label: item.departmentName,
         });
       });
-      console.log(department);
     });
     getDoctor().then((res) => {
       data = [];
@@ -80,7 +76,7 @@ const HospitalBody2 = () => {
             .label,
         });
       });
-      console.log(data);
+
       setShowData(data);
     });
   }, [update]);
@@ -91,7 +87,6 @@ const HospitalBody2 = () => {
         placeholder="ค้นหาแพทย์"
         className="mb-4"
         onChange={(value) => {
-          console.log(data);
           setShowData(
             data.filter((item) => {
               return (

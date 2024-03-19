@@ -16,8 +16,8 @@ export async function getQueueByToken(token) {
   return response.data;
 }
 
-export async function addQueue() {
-  const response = await axios.post(`${BACKEND_URL}/queue/add`);
+export async function addQueue(form) {
+  const response = await axios.post(`${BACKEND_URL}/queue/add`, form);
   return response.data;
 }
 

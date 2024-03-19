@@ -13,7 +13,6 @@ const QrScaner = () => {
   const [qrscan, setQrscan] = useState("No result");
   const handleScan = (data) => {
     if (data) {
-      console.log(data);
       setQrscan(data);
     }
   };

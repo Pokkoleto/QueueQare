@@ -42,10 +42,8 @@ const HospitalBody1 = () => {
   const [update, setUpdate] = useState(1);
   const [form] = Form.useForm();
   const handleAdd = (e, departmentId) => {
-    console.log(e);
     e.departmentId = departmentId;
     addDepartment(e).then((res) => {
-      console.log(res);
       setUpdate(update + 1);
       form.resetFields();
       setOpen(false);
@@ -53,9 +51,7 @@ const HospitalBody1 = () => {
     });
   };
   const handleDelete = (key) => {
-    console.log(key);
     delDepartment(key).then((res) => {
-      console.log(res);
       setUpdate(update + 1);
     });
   };
@@ -72,7 +68,7 @@ const HospitalBody1 = () => {
           member: item.member,
         });
       });
-      console.log(data);
+
       setShowData(data);
     });
   }, [update]);
@@ -82,7 +78,6 @@ const HospitalBody1 = () => {
         placeholder="ค้นหาแผนก"
         className="mb-4"
         onChange={(value) => {
-          console.log(data);
           setShowData(
             data.filter((item) => {
               return (
