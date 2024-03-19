@@ -2,19 +2,7 @@ import React, { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../App.css";
 import { UserOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Layout,
-  Menu,
-  Table,
-  Input,
-  Space,
-  Modal,
-  Form,
-  Popconfirm,
-  QRCode,
-  Select,
-} from "antd";
+import { Layout, Menu, Input, Space, QRCode } from "antd";
 import { useState } from "react";
 import { faBuilding, faMap } from "@fortawesome/free-regular-svg-icons";
 import HospitalBody1 from "../components/HospitalBody1";
@@ -28,9 +16,6 @@ function getItem(label, key, icon, children) {
     label,
   };
 }
-const { Column } = Table;
-let data = [];
-const data2 = [];
 
 const items = [
   getItem("แผนก", "1", <FontAwesomeIcon icon={faBuilding} />),

@@ -4,7 +4,7 @@ import "../App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getQueueByToken } from "../services/queue.service";
 import { getDepartmentById } from "../services/department.service";
@@ -22,6 +22,19 @@ const Home = () => {
         setInfo(res);
       });
     });
+    let interval = setInterval(
+      () =>
+        getQueueByToken(tt).then((res) => {
+          setQueue(res);
+          getDepartmentById(res.departmentId).then((res) => {
+            setInfo(res);
+          });
+        }),
+      1000
+    );
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
   return (
     <div>
@@ -50,7 +63,7 @@ const Home = () => {
           <div className="d-flex justify-center">
             <FontAwesomeIcon icon={faClock} size="2x" color="#0e4e89" />
             <p className="text-primry-dark text-2xl text-center ml-4 font-bold">
-              {queue.queueBefore * 5} นาที
+              {queue.queueBefore * 4} นาที
             </p>
           </div>
         </Row>
@@ -58,10 +71,14 @@ const Home = () => {
           <Col className="box-container ml-6 mr-3 flex justify-center">
             <div className="">
               <p className="text-primry-dark text-center font-bold">
-                คิวก่อนหน้า
+                {queue.queueBefore == 0 ? "สถานะ" : "คิวก่อนหน้า"}
               </p>
               <p className="text-primry-dark text-center text-4xl font-bold">
-                {queue.queueBefore}
+                {queue.queueBefore == 0
+                  ? queue.status == "waiting"
+                    ? "คิวต่อไป"
+                    : "กำลังตรวจ"
+                  : queue.queueBefore}
               </p>
             </div>
           </Col>
